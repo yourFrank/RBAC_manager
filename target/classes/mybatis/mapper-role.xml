@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ty.crowdfunding.dao.RoleDao">
+    <select id="getPageNo" resultType="com.ty.crowdfunding.bean.Role">
+        select * from role
+        <where>
+            <if test="_parameter!=null">
+                role_name like concat('%', #{_parameter}, '%')
+            </if>
+        </where>
+        order by create_date desc
+    </select>
+
+    <insert id="addRole">
+        insert into role(role_name,create_date) values (#{roleName},#{createDate})
+    </insert>
+
+    <update id="updateRole">
+        update role set role_name=#{roleName} where id=#{id}
+    </update>
+    
+    <delete id="deleteRoles">
+        delete from role where id in
+        <foreach collection="roleIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getassignedRoleId" resultType="java.lang.Integer">
+        select role_id from user_role where user_id=#{uid}
+    </select>
+    
+    <insert id="assignedRole">
+
+            insert into user_role values
+        <foreach collection="role_id" item="rid"  separator=",">
+            (#{uid},#{rid})
+        </foreach>
+
+    </insert>
+    <delete id="unassignedRole">
+
+           delete from user_role where user_id=#{uid} and role_id in
+           <foreach collection="role_id" item="rid" open="(" close=")" separator=",">
+               #{rid}
+             </foreach>
+    </delete>
+
+</mapper>

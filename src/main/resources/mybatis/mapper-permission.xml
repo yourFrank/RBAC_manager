@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ty.crowdfunding.dao.PermissionDao">
+
+    
+    <insert id="assignPermission">
+
+            insert into role_permission(r_id,p_id) values
+        <foreach collection="permissionIds" item="pid"  separator=",">
+            (#{role_id},#{pid})
+        </foreach>
+
+    </insert>
+
+    <select id="getPermissionByUser" resultType="com.ty.crowdfunding.bean.Permission">
+          select * from permission where id in (select p_id from role_permission where r_id in
+         (select role_id from user_role where
+        user_id =#{id}
+        ))
+
+    </select>
+
+</mapper>
